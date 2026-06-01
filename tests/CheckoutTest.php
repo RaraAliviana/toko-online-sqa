@@ -13,8 +13,29 @@ class CheckoutTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->fileProduk = __DIR__ . '/../data/products.json';
-        $this->filePesanan = __DIR__ . '/../data/orders.json';
+        copy(
+            __DIR__ . '/../data/products_seed.json',
+            __DIR__ . '/../data/products_test.json'
+        );
+
+        file_put_contents(
+            __DIR__ . '/../data/orders_test.json',
+            json_encode([])
+        );
+
+        $this->fileProduk = __DIR__ . '/../data/products_test.json';
+        $this->filePesanan = __DIR__ . '/../data/orders_test.json';
+    }
+
+    protected function tearDown(): void
+    {
+        if (file_exists($this->fileProduk)) {
+            unlink($this->fileProduk);
+        }
+
+        if (file_exists($this->filePesanan)) {
+            unlink($this->filePesanan);
+        }
     }
 
     // PATH 1
@@ -41,7 +62,7 @@ class CheckoutTest extends TestCase
         );
     }
 
-    // PATH 2
+    // PATH 2 - Gratis Ongkir
     public function testGratisOngkir()
     {
         $checkout = new Checkout(
@@ -60,13 +81,15 @@ class CheckoutTest extends TestCase
             $keranjang
         );
 
+        // 300.000 + 200.000 = 500.000
+        // Gratis ongkir
         $this->assertEquals(
-            550000,
+            500000,
             $hasil['total_bayar']
         );
     }
 
-    // PATH 3
+    // PATH 3 - Diskon 10%
     public function testDiskon10Persen()
     {
         $checkout = new Checkout(
@@ -84,8 +107,11 @@ class CheckoutTest extends TestCase
             $keranjang
         );
 
+        // 5 x 200.000 = 1.000.000
+        // Diskon 10% = 100.000
+        // Total = 900.000
         $this->assertEquals(
-            1125000,
+            900000,
             $hasil['total_bayar']
         );
     }
