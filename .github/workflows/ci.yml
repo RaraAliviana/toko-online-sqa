@@ -27,6 +27,6 @@ jobs:
 
     - name: Tunggu Server Siap
       run: sleep 3
-
+    
     - name: Jalankan Semua Test + Coverage
-      run: vendor/bin/phpunit tests/ --coverage-text
+      run: php vendor/bin/phpunit tests/ --coverage-text
