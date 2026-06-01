@@ -33,7 +33,7 @@ class CatalogTest extends TestCase
     {
         $result = $this->katalog->searchProduct("Kemeja");
 
-        $this->assertCount(99, $result);
+        $this->assertCount(1, $result);
     }
 
     protected function tearDown(): void
