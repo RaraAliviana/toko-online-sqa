@@ -1,0 +1,32 @@
+name: SQA CI & CT Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Setup PHP dengan Xdebug
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        coverage: xdebug
+
+    - name: Install PHP Dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Start PHP Server (Background)
+      run: php -S localhost:8000 &
+
+    - name: Start ChromeDriver (Background)
+      run: chromedriver --port=9515 --url-base=wd/hub &
+
+    - name: Tunggu Server Siap
+      run: sleep 3
+
+    - name: Jalankan Semua Test + Coverage
+      run: vendor/bin/phpunit tests/ --coverage-text
